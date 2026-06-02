@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nuxt 4 Drizzle Schema Workflow"
+  short_description: "Manage Drizzle schemas and migrations for Nuxt 4."
+  default_prompt: "Add or change a Drizzle schema and migration in this Nuxt 4 project."

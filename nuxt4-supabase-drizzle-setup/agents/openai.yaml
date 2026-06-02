@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nuxt 4 Supabase Drizzle Setup"
+  short_description: "Set up Nuxt 4 with Supabase Postgres and Drizzle."
+  default_prompt: "Set up Supabase Postgres and Drizzle ORM in this Nuxt 4 project."

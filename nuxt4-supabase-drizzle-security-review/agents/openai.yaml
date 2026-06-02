@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nuxt 4 Supabase Drizzle Security Review"
+  short_description: "Review Supabase and Drizzle security boundaries in Nuxt 4."
+  default_prompt: "Review this Nuxt 4 Supabase and Drizzle setup for security issues."
