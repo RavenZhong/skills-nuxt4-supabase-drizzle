@@ -2,6 +2,8 @@
 
 Reusable Codex skills for integrating Supabase Postgres and Drizzle ORM into Nuxt 4/Nitro projects.
 
+中文文档请查看 [README.zh-CN.md](README.zh-CN.md)。如果你更习惯中文说明，可以先阅读中文文档了解安装方式、核心规则和设计原因，再查看各 skill 的英文 `SKILL.md`。
+
 This repository is intentionally generic. It extracts reusable engineering workflow from a real Nuxt 4 project, but does not include any project-specific business tables, payment models, user settings, or product rules.
 
 ## Skills
