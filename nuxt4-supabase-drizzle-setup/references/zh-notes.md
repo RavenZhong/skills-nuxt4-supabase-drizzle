@@ -62,6 +62,40 @@ const queryClient = postgres(connectionString, {
 export const db = drizzle(queryClient, { schema });
 ```
 
+## TypeScript 配置
+
+为了让编辑器和类型检查正确识别根目录 `database/**/*.ts`，需要增加 `tsconfig.database.json`：
+
+```json
+{
+  "extends": "./.nuxt/tsconfig.server.json",
+  "compilerOptions": {
+    "esModuleInterop": true
+  },
+  "include": [
+    "database/**/*.ts"
+  ]
+}
+```
+
+然后在根目录 `tsconfig.json` 的 `references` 中增加：
+
+```json
+{
+  "path": "./tsconfig.database.json"
+}
+```
+
+如果项目的 `tsconfig.json` 已经有其他 references，保留原有内容，只追加这一项。
+
+同时要检查 `package.json` 是否已有 `@types/node` 开发依赖。没有的话需要安装：
+
+```bash
+pnpm add -D @types/node
+```
+
+原因是 `database/index.ts` 推荐读取 `process.env.NUXT_DATABASE_URL`，根目录数据库文件也可能使用 Node API；缺少 `@types/node` 时，编辑器可能无法正确识别 `process` 等 Node 全局类型。
+
 ## 不应写入的项目专用内容
 
 - 具体业务表。

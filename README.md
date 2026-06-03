@@ -103,6 +103,32 @@ The recommended `database/index.ts` reads `process.env.NUXT_DATABASE_URL` direct
 
 Do not use `useRuntimeConfig()` inside `database/index.ts`. Nuxt documents `useRuntimeConfig()` as a composable that should be called in an appropriate Nuxt context, such as a server handler, plugin, route middleware, or setup function. The root-level database module can also be loaded by Drizzle Kit, TypeScript tooling, and other Node processes outside Nuxt runtime.
 
+## TypeScript Support for `database/`
+
+Projects should add a dedicated `tsconfig.database.json` for root-level database files:
+
+```json
+{
+  "extends": "./.nuxt/tsconfig.server.json",
+  "compilerOptions": {
+    "esModuleInterop": true
+  },
+  "include": [
+    "database/**/*.ts"
+  ]
+}
+```
+
+Then add this project reference to the root `tsconfig.json`:
+
+```json
+{
+  "path": "./tsconfig.database.json"
+}
+```
+
+Also make sure `@types/node` exists in `devDependencies`, because the database entrypoint reads `process.env` and may use Node APIs.
+
 ## 中文说明
 
 每个 skill 都包含一份中文说明文档，位于：

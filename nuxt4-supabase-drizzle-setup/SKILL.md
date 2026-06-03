@@ -39,10 +39,12 @@ Check `package.json` first. Add missing packages only when the project does not 
 
 ```bash
 pnpm add @supabase/supabase-js drizzle-orm postgres
-pnpm add -D drizzle-kit dotenv
+pnpm add -D drizzle-kit dotenv @types/node
 ```
 
 Use the repository's package manager if it is not `pnpm`.
+
+`@types/node` is required for clean TypeScript support when root-level database files read `process.env` and use Node APIs. If the project already has it as a dev dependency, do not install it again.
 
 ## Runtime Config Contract
 
@@ -144,6 +146,49 @@ export const db = drizzle(queryClient, { schema });
 ```
 
 Do not use `useRuntimeConfig()` in `database/index.ts`. Nuxt documentation presents `useRuntimeConfig()` as a composable that should be called in an appropriate Nuxt context, such as a server handler, plugin, route middleware, or setup function. The root-level `database/` module is also loaded by Drizzle tooling and TypeScript outside Nuxt runtime, so `process.env.NUXT_DATABASE_URL` is the simpler and more reliable source for the Drizzle connection.
+
+## TypeScript Project Reference
+
+Add a dedicated `tsconfig.database.json` so editors and type checks understand root-level database files as server-side TypeScript:
+
+```json
+{
+  "extends": "./.nuxt/tsconfig.server.json",
+  "compilerOptions": {
+    "esModuleInterop": true
+  },
+  "include": [
+    "database/**/*.ts"
+  ]
+}
+```
+
+Then add it to the root `tsconfig.json` references:
+
+```json
+{
+  "references": [
+    {
+      "path": "./.nuxt/tsconfig.app.json"
+    },
+    {
+      "path": "./.nuxt/tsconfig.server.json"
+    },
+    {
+      "path": "./.nuxt/tsconfig.shared.json"
+    },
+    {
+      "path": "./.nuxt/tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.database.json"
+    }
+  ],
+  "files": []
+}
+```
+
+If the project has a custom `tsconfig.json`, preserve existing references and add only the `./tsconfig.database.json` entry.
 
 ## First Verification
 
