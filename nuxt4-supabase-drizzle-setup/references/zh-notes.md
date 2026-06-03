@@ -70,13 +70,16 @@ export const db = drizzle(queryClient, { schema });
 {
   "extends": "./.nuxt/tsconfig.server.json",
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node"]
   },
   "include": [
     "database/**/*.ts"
   ]
 }
 ```
+
+这里必须显式写 `"types": ["node"]`。Nuxt 生成的 `.nuxt/tsconfig.server.json` / `.nuxt/tsconfig.node.json` 中可能存在 `"types": []`。在 TypeScript 里，只要配置了 `compilerOptions.types`，TS 就不会自动加载所有 `@types/*` 包；`types: []` 等于明确告诉 TS 不要引入任何全局类型包。所以即使 `package.json` 已经安装了 `@types/node`，`process` 这类 Node 全局类型仍然可能不可见，需要在 `tsconfig.database.json` 中重新声明 Node types。
 
 然后在根目录 `tsconfig.json` 的 `references` 中增加：
 

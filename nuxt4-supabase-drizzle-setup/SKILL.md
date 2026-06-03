@@ -155,13 +155,16 @@ Add a dedicated `tsconfig.database.json` so editors and type checks understand r
 {
   "extends": "./.nuxt/tsconfig.server.json",
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node"]
   },
   "include": [
     "database/**/*.ts"
   ]
 }
 ```
+
+Keep `"types": ["node"]` even when `@types/node` is installed. Nuxt-generated server and node tsconfigs may set `"types": []`; in TypeScript, once `compilerOptions.types` is set, TypeScript does not automatically load every `@types/*` package. An inherited empty `types` array can hide Node globals such as `process` unless this database-specific tsconfig opts back into Node types.
 
 Then add it to the root `tsconfig.json` references:
 

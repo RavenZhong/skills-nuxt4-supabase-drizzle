@@ -113,13 +113,16 @@ Projects should add a dedicated `tsconfig.database.json` for root-level database
 {
   "extends": "./.nuxt/tsconfig.server.json",
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node"]
   },
   "include": [
     "database/**/*.ts"
   ]
 }
 ```
+
+The explicit `"types": ["node"]` matters because Nuxt-generated tsconfigs can contain `"types": []`. Once `compilerOptions.types` is set, TypeScript does not automatically include every `@types/*` package, so Node globals such as `process` can remain invisible even when `@types/node` is installed.
 
 Then add this project reference to the root `tsconfig.json`:
 

@@ -132,13 +132,16 @@ export const db = drizzle(queryClient, { schema });
 {
   "extends": "./.nuxt/tsconfig.server.json",
   "compilerOptions": {
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node"]
   },
   "include": [
     "database/**/*.ts"
   ]
 }
 ```
+
+这里必须显式写 `"types": ["node"]`。Nuxt 生成的 `.nuxt/tsconfig.server.json` / `.nuxt/tsconfig.node.json` 里可能有 `"types": []`；TypeScript 一旦看到 `compilerOptions.types`，就不会自动加载所有 `@types/*` 包，所以即使已经安装 `@types/node`，`process` 这类 Node 全局类型也可能不可见。
 
 然后在根目录 `tsconfig.json` 的 `references` 中追加：
 
