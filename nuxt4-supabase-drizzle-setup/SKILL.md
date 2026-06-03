@@ -127,17 +127,23 @@ Create `database/index.ts` as the single server-side Drizzle entrypoint:
 ```ts
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+
 import * as schema from './schema';
 
-const config = useRuntimeConfig();
-const queryClient = postgres(config.db.url, {
+const connectionString = process.env.NUXT_DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('Missing NUXT_DATABASE_URL for Drizzle connection.');
+}
+
+const queryClient = postgres(connectionString, {
   prepare: false,
 });
 
 export const db = drizzle(queryClient, { schema });
 ```
 
-If the file can be loaded outside Nitro runtime, add a safe fallback to `process.env.NUXT_DATABASE_URL`.
+Do not use `useRuntimeConfig()` in `database/index.ts`. Nuxt documentation presents `useRuntimeConfig()` as a composable that should be called in an appropriate Nuxt context, such as a server handler, plugin, route middleware, or setup function. The root-level `database/` module is also loaded by Drizzle tooling and TypeScript outside Nuxt runtime, so `process.env.NUXT_DATABASE_URL` is the simpler and more reliable source for the Drizzle connection.
 
 ## First Verification
 

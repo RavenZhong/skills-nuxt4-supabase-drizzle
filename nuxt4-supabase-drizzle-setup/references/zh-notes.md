@@ -35,6 +35,33 @@ npx skills add supabase/agent-skills
 1. Drizzle Kit 是独立工具，不运行在 Nuxt runtime 里，不能天然识别 Nuxt 的 `~` 路径映射。如果 schema 文件放在 `server/` 下，文件之间引用时容易出现 `~` alias；Drizzle Kit 不额外处理路径映射就会报错，额外处理又会增加维护成本。
 2. Nuxt layer 场景下可能存在多个 `server/` 目录。如果 layer 也要使用数据库能力，再从 layer 的 `server/` 去引用根项目的 `server/`，路径语义会变得不清晰。根目录 `database/` 更适合作为跨 app/layer/server 共享的数据库层入口。
 
+## database/index.ts 不建议使用 useRuntimeConfig
+
+`database/index.ts` 建议直接读取 `process.env.NUXT_DATABASE_URL`，不要使用 `useRuntimeConfig()`。
+
+原因是 Nuxt 文档把 `useRuntimeConfig()` 作为需要 Nuxt 上下文的 composable 使用，推荐在 server handler、plugin、route middleware 或 setup function 等合适上下文中调用。根目录 `database/` 既会被 Nuxt server services 引用，也可能被 Drizzle Kit、TypeScript 编辑器和其他 Node 工具加载，这些场景不一定处在 Nuxt runtime context 中。
+
+推荐代码：
+
+```ts
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+
+import * as schema from './schema';
+
+const connectionString = process.env.NUXT_DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('Missing NUXT_DATABASE_URL for Drizzle connection.');
+}
+
+const queryClient = postgres(connectionString, {
+  prepare: false,
+});
+
+export const db = drizzle(queryClient, { schema });
+```
+
 ## 不应写入的项目专用内容
 
 - 具体业务表。

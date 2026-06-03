@@ -97,6 +97,12 @@ Drizzle Kit runs outside Nuxt's runtime path resolver and does not automatically
 
 Nuxt layer projects can also contain multiple `server/` directories. If database code lives under one `server/` directory, layers that need database access may end up with unclear cross-server imports. A root-level `database/` directory gives schema, relations, migrations, and the Drizzle client a clear shared home.
 
+## Drizzle Client Environment Loading
+
+The recommended `database/index.ts` reads `process.env.NUXT_DATABASE_URL` directly and throws if it is missing.
+
+Do not use `useRuntimeConfig()` inside `database/index.ts`. Nuxt documents `useRuntimeConfig()` as a composable that should be called in an appropriate Nuxt context, such as a server handler, plugin, route middleware, or setup function. The root-level database module can also be loaded by Drizzle Kit, TypeScript tooling, and other Node processes outside Nuxt runtime.
+
 ## 中文说明
 
 每个 skill 都包含一份中文说明文档，位于：
