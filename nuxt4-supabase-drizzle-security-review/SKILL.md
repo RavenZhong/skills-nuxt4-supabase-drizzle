@@ -28,7 +28,7 @@ Inspect the actual project before making claims:
 - Keep `database/` outside `server/`.
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
-- Expose only public Supabase keys to the frontend.
+- Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
 
 Treat root-level `database/` placement as part of the security and maintainability boundary. Drizzle Kit does not automatically resolve Nuxt `~` aliases from schema files, and Nuxt layer projects can have multiple `server/` directories. Keeping database code at the root reduces alias workarounds and ambiguous cross-layer imports.
@@ -40,8 +40,8 @@ Treat root-level `database/` placement as part of the security and maintainabili
 Check that:
 
 - `NUXT_DATABASE_URL` is server-only.
-- `NUXT_SUPABASE_SERVICE_ROLE_KEY` is server-only.
-- Only public Supabase URL/key values appear under `runtimeConfig.public`.
+- `NUXT_SUPABASE_SERVICE_ROLE_KEY` is server-only when the project uses Supabase Admin/Auth management.
+- Only public Supabase URL/key values appear under `runtimeConfig.public` when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
 - No service role key, database URL, or admin secret appears in frontend code, public assets, client plugins, or logs.
 
 ### Database access

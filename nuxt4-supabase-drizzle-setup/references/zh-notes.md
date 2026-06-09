@@ -25,8 +25,24 @@ npx skills add supabase/agent-skills
 - `database/` 不放在 `server/` 里。
 - schema 和 migration 保持同步。
 - server services 统一负责数据库访问。
-- 前端只持有公开 Supabase key。
+- 只有使用 Supabase Auth、Supabase JS SDK 或前端直连 Supabase 时，前端才需要持有公开 Supabase key。
 - migration 生成后检查 SQL 和 Drizzle metadata。
+
+## 依赖与环境变量的最小配置
+
+如果项目只使用 Supabase 的 Postgres 数据库，并通过 Drizzle 在 Nuxt server 侧访问数据库，不使用 Supabase 登录 SDK，也不让前端直连 Supabase，则只需要：
+
+- 环境变量：`NUXT_DATABASE_URL`
+- 运行依赖：`drizzle-orm`、`postgres`
+- 开发依赖：`drizzle-kit`、`dotenv`、`@types/node`
+
+这种场景不需要安装 `@supabase/supabase-js`，也不需要配置：
+
+- `NUXT_PUBLIC_SUPABASE_URL`
+- `NUXT_PUBLIC_SUPABASE_KEY`
+- `NUXT_SUPABASE_SERVICE_ROLE_KEY`
+
+只有项目确实使用 Supabase Auth、Supabase JS SDK、前端直连 Supabase 或 Supabase Admin API 时，才需要安装 `@supabase/supabase-js` 并配置对应 Supabase URL/key。
 
 ## database 放在根目录的原因
 

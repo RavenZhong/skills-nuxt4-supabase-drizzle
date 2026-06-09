@@ -30,7 +30,7 @@ After installation, use those skills for Supabase-specific documentation checks,
 - Keep `database/` outside `server/`.
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
-- Expose only public Supabase keys to the frontend.
+- Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
 
 ## Recommended Dependencies
@@ -38,7 +38,7 @@ After installation, use those skills for Supabase-specific documentation checks,
 Check `package.json` first. Add missing packages only when the project does not already provide an equivalent:
 
 ```bash
-pnpm add @supabase/supabase-js drizzle-orm postgres
+pnpm add drizzle-orm postgres
 pnpm add -D drizzle-kit dotenv @types/node
 ```
 
@@ -46,16 +46,21 @@ Use the repository's package manager if it is not `pnpm`.
 
 `@types/node` is required for clean TypeScript support when root-level database files read `process.env` and use Node APIs. If the project already has it as a dev dependency, do not install it again.
 
+Install `@supabase/supabase-js` only when the project uses Supabase Auth, the Supabase JavaScript SDK, or direct frontend Supabase access:
+
+```bash
+pnpm add @supabase/supabase-js
+```
+
 ## Runtime Config Contract
 
-Configure these values in `nuxt.config.ts` or the project's existing runtime config layer:
+For database-only Supabase Postgres + Drizzle usage, only `NUXT_DATABASE_URL` is required. The Drizzle client reads it from `process.env`, so it does not need to be placed in `runtimeConfig` unless other server code also reads it from Nuxt runtime config.
+
+Configure these Supabase client/Auth values only when the project uses Supabase Auth, the Supabase JavaScript SDK, or direct frontend Supabase access:
 
 ```ts
 runtimeConfig: {
   supabaseServiceRoleKey: process.env.NUXT_SUPABASE_SERVICE_ROLE_KEY,
-  db: {
-    url: process.env.NUXT_DATABASE_URL,
-  },
   public: {
     supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
     supabaseKey: process.env.NUXT_PUBLIC_SUPABASE_KEY,
@@ -65,10 +70,10 @@ runtimeConfig: {
 
 Key boundaries:
 
-- `NUXT_PUBLIC_SUPABASE_URL`: browser-safe Supabase project URL.
-- `NUXT_PUBLIC_SUPABASE_KEY`: browser-safe public key only.
-- `NUXT_SUPABASE_SERVICE_ROLE_KEY`: server-only; never put it under `runtimeConfig.public`.
 - `NUXT_DATABASE_URL`: server-only Postgres connection string for Drizzle.
+- `NUXT_PUBLIC_SUPABASE_URL`: browser-safe Supabase project URL; needed only for Supabase client/Auth usage.
+- `NUXT_PUBLIC_SUPABASE_KEY`: browser-safe public key only; needed only for Supabase client/Auth usage.
+- `NUXT_SUPABASE_SERVICE_ROLE_KEY`: server-only; needed only for Supabase Admin/Auth management use cases, and never under `runtimeConfig.public`.
 
 ## Directory Contract
 

@@ -15,7 +15,7 @@ Use when setting up or repairing the foundational Nuxt 4 + Supabase Postgres + D
 Covers:
 
 - Supabase agent skill prerequisite installation.
-- Nuxt runtime config boundaries.
+- Database-only vs Supabase client/Auth configuration boundaries.
 - Drizzle package dependencies.
 - `database/` directory contract.
 - `drizzle.config.ts`.
@@ -88,8 +88,20 @@ The three skills share these core rules:
 - Keep `database/` outside `server/`.
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
-- Expose only public Supabase keys to the frontend.
+- Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
+
+## Database-Only Minimal Setup
+
+If a project only uses Supabase Postgres through Drizzle on the Nuxt server side, and does not use Supabase Auth, the Supabase JavaScript SDK, or direct frontend Supabase access, it only needs:
+
+- `NUXT_DATABASE_URL`
+- Runtime dependencies: `drizzle-orm`, `postgres`
+- Development dependencies: `drizzle-kit`, `dotenv`, `@types/node`
+
+In that database-only mode, do not install `@supabase/supabase-js` and do not configure `NUXT_PUBLIC_SUPABASE_URL`, `NUXT_PUBLIC_SUPABASE_KEY`, or `NUXT_SUPABASE_SERVICE_ROLE_KEY`.
+
+Install `@supabase/supabase-js` and configure Supabase URL/key values only when the project actually uses Supabase Auth, the Supabase client SDK, frontend Supabase access, or Supabase Admin APIs.
 
 ## Why `database/` Lives at the Project Root
 

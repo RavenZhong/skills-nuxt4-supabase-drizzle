@@ -13,7 +13,7 @@
 覆盖内容：
 
 - Supabase 官方 agent skills 前置安装。
-- Nuxt runtime config 边界。
+- 数据库-only 与 Supabase client/Auth 的配置边界。
 - Drizzle 依赖安装。
 - `database/` 目录契约。
 - `drizzle.config.ts` 配置。
@@ -86,8 +86,20 @@ npx skills add supabase/agent-skills
 - `database/` 不放在 `server/` 里。
 - schema 和 migrations 保持同步。
 - 数据库访问放在 server services 后面。
-- 前端只持有公开 Supabase key。
+- 只有使用 Supabase Auth、Supabase JS SDK 或前端直连 Supabase 时，前端才需要持有公开 Supabase key。
 - migration 生成后检查 SQL 和 Drizzle metadata。
+
+## 数据库-only 最小配置
+
+如果项目只通过 Nuxt server + Drizzle 使用 Supabase Postgres，不使用 Supabase Auth、不使用 Supabase JavaScript SDK，也不让前端直连 Supabase，则只需要：
+
+- `NUXT_DATABASE_URL`
+- 运行依赖：`drizzle-orm`、`postgres`
+- 开发依赖：`drizzle-kit`、`dotenv`、`@types/node`
+
+这种数据库-only 模式不需要安装 `@supabase/supabase-js`，也不需要配置 `NUXT_PUBLIC_SUPABASE_URL`、`NUXT_PUBLIC_SUPABASE_KEY` 或 `NUXT_SUPABASE_SERVICE_ROLE_KEY`。
+
+只有项目确实使用 Supabase Auth、Supabase client SDK、前端直连 Supabase 或 Supabase Admin API 时，才需要安装 `@supabase/supabase-js` 并配置对应 Supabase URL/key。
 
 ## 为什么 `database/` 放在项目根目录
 

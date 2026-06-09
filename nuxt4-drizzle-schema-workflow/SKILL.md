@@ -30,7 +30,7 @@ Verify facts from source files before claiming that a table, relation, dependenc
 - Keep `database/` outside `server/`.
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
-- Expose only public Supabase keys to the frontend.
+- Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
 
 The root-level `database/` convention is intentional. Drizzle Kit does not automatically understand Nuxt `~` aliases, so schema files under `server/` can fail unless extra alias handling is added. In Nuxt layer projects, each layer can also have its own `server/` directory, which makes database imports from a root `server/` path unclear.
