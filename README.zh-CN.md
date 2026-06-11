@@ -87,6 +87,7 @@ npx skills add supabase/agent-skills
 - schema 和 migrations 保持同步。
 - 数据库访问放在 server services 后面。
 - 只有使用 Supabase Auth、Supabase JS SDK 或前端直连 Supabase 时，前端才需要持有公开 Supabase key。
+- Supabase Postgres 暴露 schema 下的每张表都必须开启 RLS；对应 Drizzle 的每个 `pgTable(...)` schema 都应该调用 `.enableRLS()`。
 - migration 生成后检查 SQL 和 Drizzle metadata。
 
 ## 数据库-only 最小配置

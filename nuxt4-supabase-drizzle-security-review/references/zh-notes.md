@@ -12,6 +12,7 @@
 - 受保护业务数据应通过 Nitro/server services 访问。
 - 权限判断不能只依赖浏览器状态。
 - 涉及 Supabase exposed schema 时需要关注 RLS。
+- Drizzle schema 中每个暴露 schema 下的 `pgTable(...)` 都应该调用 `.enableRLS()`。
 - migration 里创建 view/function 时需要额外检查安全属性。
 
 ## database 放在根目录的原因

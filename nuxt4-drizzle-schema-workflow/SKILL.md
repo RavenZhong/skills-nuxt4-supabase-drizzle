@@ -31,6 +31,7 @@ Verify facts from source files before claiming that a table, relation, dependenc
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
 - Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
+- Enable RLS for every Supabase Postgres table in exposed schemas; each Drizzle `pgTable(...)` schema should call `.enableRLS()`.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
 
 The root-level `database/` convention is intentional. Drizzle Kit does not automatically understand Nuxt `~` aliases, so schema files under `server/` can fail unless extra alias handling is added. In Nuxt layer projects, each layer can also have its own `server/` directory, which makes database imports from a root `server/` path unclear.
@@ -41,11 +42,20 @@ The root-level `database/` convention is intentional. Drizzle Kit does not autom
 2. Add or update one focused table file under `database/schemas/*.table.ts`.
 3. Use `pgTable` with snake_case database names and idiomatic TypeScript export names.
 4. Add indexes, unique constraints, checks, JSONB, timestamps, UUID defaults, and nullability according to the actual data contract.
-5. Decide whether database foreign keys are appropriate based on the target project's conventions.
-6. Export the table from `database/schema.ts`.
-7. Add or update Drizzle `relations(...)` in `database/schema.ts` when query relations are needed.
-8. Update server services to import from the central database exports.
-9. Add or update focused tests when the change affects behavior or constraints.
+5. Chain `.enableRLS()` on each table in exposed Supabase/Postgres schemas, then define policies that match the access model in the migration or project policy workflow.
+6. Decide whether database foreign keys are appropriate based on the target project's conventions.
+7. Export the table from `database/schema.ts`.
+8. Add or update Drizzle `relations(...)` in `database/schema.ts` when query relations are needed.
+9. Update server services to import from the central database exports.
+10. Add or update focused tests when the change affects behavior or constraints.
+
+Example table shape:
+
+```ts
+export const users = pgTable('users', {
+  // columns
+}).enableRLS();
+```
 
 ## Migration Workflow
 
@@ -58,6 +68,7 @@ pnpm drizzle-kit generate
 After generation:
 
 - Inspect the generated SQL.
+- Confirm the generated SQL enables row-level security for every table that calls `.enableRLS()`.
 - Inspect `database/migrations/meta`.
 - Confirm SQL, metadata, and TypeScript schema describe the same change.
 - Do not hand-edit migration SQL without keeping schema and metadata strategy coherent.

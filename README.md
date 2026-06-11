@@ -89,6 +89,7 @@ The three skills share these core rules:
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
 - Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
+- Enable RLS for every Supabase Postgres table in exposed schemas; each Drizzle `pgTable(...)` schema should call `.enableRLS()`.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
 
 ## Database-Only Minimal Setup

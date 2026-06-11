@@ -29,6 +29,7 @@ Inspect the actual project before making claims:
 - Keep Drizzle schema and migrations synchronized.
 - Put database access behind server services.
 - Expose Supabase public keys to the frontend only when the project uses Supabase Auth, Supabase client SDK, or direct frontend Supabase access.
+- Enable RLS for every Supabase Postgres table in exposed schemas; each Drizzle `pgTable(...)` schema should call `.enableRLS()`.
 - Inspect generated migration SQL and Drizzle metadata before treating a migration as ready.
 
 Treat root-level `database/` placement as part of the security and maintainability boundary. Drizzle Kit does not automatically resolve Nuxt `~` aliases from schema files, and Nuxt layer projects can have multiple `server/` directories. Keeping database code at the root reduces alias workarounds and ambiguous cross-layer imports.
@@ -66,10 +67,11 @@ Flag patterns where:
 
 ### RLS and exposed schemas
 
-For tables in exposed Supabase schemas, check whether RLS and policies match the access model. Use the `supabase` skill for current product guidance before making detailed RLS recommendations.
+For tables in exposed Supabase schemas, check whether RLS and policies match the access model. Drizzle table definitions should call `.enableRLS()` on each `pgTable(...)`, and generated migration SQL should enable row-level security for those tables. Use the `supabase` skill for current product guidance before making detailed RLS recommendations.
 
 Pay special attention to:
 
+- Tables missing `.enableRLS()` in Drizzle schema definitions.
 - Views that may bypass RLS.
 - Security definer functions in exposed schemas.
 - UPDATE policies that forget the required SELECT visibility.

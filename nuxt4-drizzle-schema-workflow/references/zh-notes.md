@@ -10,7 +10,18 @@
 - `database/schema.ts` 作为统一出口。
 - schema、migration SQL、Drizzle metadata 必须保持一致。
 - 数据库访问应放在 `server/services/**`。
+- Supabase Postgres 暴露 schema 下的每张表都必须开启 RLS；对应 Drizzle 的每个 `pgTable(...)` schema 都应该调用 `.enableRLS()`。
 - API handler 不应直接堆复杂数据库逻辑。
+
+示例：
+
+```ts
+export const users = pgTable('users', {
+  // columns
+}).enableRLS();
+```
+
+生成 migration 后，需要检查 SQL 中是否已经为对应表开启 row-level security，并继续按项目访问模型补齐 RLS policies。
 
 ## database 放在根目录的原因
 
